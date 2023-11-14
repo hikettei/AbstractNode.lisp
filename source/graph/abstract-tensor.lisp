@@ -20,6 +20,7 @@
       (%make-shape expression)))
 
 (defstruct (AbstractTensor
+	    (:copier copy-tensor)
 	    (:conc-name tensor-))
   "## [struct] AbstractTensor
 "
@@ -33,10 +34,41 @@
 
   (variables nil :type list)
   (node      nil)
+
+  (detach-p nil  :type boolean)
   ;; Memory-ID = variable name
   ;; ID = ID dedicated to topological sorting
   (memory-id (gensym "TID") :type symbol)
   (id        (gensym "ID")  :type symbol))
+
+(defmethod print-object ((obj AbstractTensor) stream)
+  (flet ((helper (tensors)
+	   (format nil "~a"
+		   (apply
+		    #'concatenate
+		    'string
+		    (butlast
+		     (loop for tensor in tensors
+			   append
+			   `(,(format
+			       nil
+			       "~a~a"
+			       (tensor-id tensor)
+			       (tensor-shape tensor))
+			     " ")))))))
+
+    (format stream "AbstractTensor{~a, ~a}
+    storage=~a
+    memory-id=~a, id=~a
+    node=~a
+    variables=~a"
+	    (tensor-shape obj)
+	    (tensor-dtype obj)
+	    (tensor-storage obj)
+	    (tensor-memory-id obj)
+	    (tensor-id obj)
+	    (tensor-node obj)
+	    (helper (tensor-variables obj)))))
 
 (defun make-scalar (storage dtype
 		    &key

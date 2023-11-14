@@ -28,14 +28,15 @@ In cl-waffe2, ALL MODELS ARE REPRESENTED BY THESE COMPONENTS:
    - [method] compile-iteration
    - [method] compile-instruction
 ")
-  (:use :cl)
-  (:import-from
-   :abstractnode.graph
-   #:AbstractTensor
-   )
-  
+  (:use :cl :AbstractNode.graph)
+
+  ;; Conditions
   (:export
    #:Backend-Missing-Operation)
+
+  (:export
+   #:compile-with-backend
+   #:compute-with-backend)  
   
   (:export
    #:compile-lazy-index

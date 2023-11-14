@@ -14,7 +14,8 @@ A Package dedicated to express the computation node comprised of two principle o
   (:export
    #:call
    #:make-op
-   
+
+   #:AbstractNode-id
    #:AbstractNode
    #:AbstractNode-name
    #:AbstractNode-op
@@ -26,6 +27,7 @@ A Package dedicated to express the computation node comprised of two principle o
 
   (:export
    #:AbstractTensor
+   #:copy-tensor
    #:make-scalar
    #:make-tensor
    #:tensor-storage
@@ -37,7 +39,8 @@ A Package dedicated to express the computation node comprised of two principle o
    #:tensor-variables
    #:tensor-node
    #:tensor-memory-id
-   #:tensor-id)
+   #:tensor-id
+   #:tensor-detach-p)
   
   (:export
    #:Shape
@@ -47,4 +50,3 @@ A Package dedicated to express the computation node comprised of two principle o
   )
 
 (in-package :abstractnode.graph)
-

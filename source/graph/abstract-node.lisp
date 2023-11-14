@@ -10,6 +10,7 @@
 ## [struct] AbstractNode
 out[0], out[1], ... <- op(in[0], in[1], ...)
 where op is named as `name`"
+  (id   (gensym "NID")  :type symbol)
   (name (gensym "NODE") :type symbol)
   (op)
   
@@ -79,13 +80,10 @@ where op is named as `name`"
     ;; Recording Computation Nodes
     (mapc
      #'(lambda (out-tensor)
-	 (setf (tensor-variables out-tensor) tensors))
+	 (setf (tensor-variables out-tensor) tensors
+	       (tensor-node      out-tensor) AbstractNode))
      next-outputs)
 
-    (mapc
-     #'(lambda (tensor)
-	 (setf (tensor-node tensor) AbstractNode))
-     tensors)
 
     (setf (AbstractNode-in-args  AbstractNode) tensors
 	  (AbstractNode-out-args AbstractNode) next-outputs)

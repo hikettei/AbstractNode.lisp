@@ -7,6 +7,7 @@
   ((:file "package")
    (:file "conditions")
    (:file "ir")
+   (:file "utils")
    (:file "lazy-index-compiler")
    (:file "compile-requirements")
    (:file "compile-aref")
