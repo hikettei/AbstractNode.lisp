@@ -19,7 +19,8 @@
       expression
       (%make-shape expression)))
 
-(defstruct (AbstractTensor)
+(defstruct (AbstractTensor
+	    (:conc-name tensor-))
   "## [struct] AbstractTensor
 "
   (storage nil)
@@ -72,4 +73,3 @@
 ;; Index-Components allowing to access the current position in the iteration
 ;; Arange can be implemented like: Empty-Array <- Index-Components
 
-(print (make-tensor `(1 2 3) :float))

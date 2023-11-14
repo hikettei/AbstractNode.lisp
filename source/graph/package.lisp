@@ -15,7 +15,22 @@ A Package dedicated to express the computation node comprised of two principle o
 
   ;; )
   (:export
-
+   #:AbstractTensor
+   #:make-scalar
+   #:make-tensor
+   #:tensor-storage
+   #:tensor-scalar-p
+   #:tensor-shape
+   #:tensor-ranges
+   #:tensor-order
+   #:tensor-dtype
+   #:tensor-variables
+   #:tensor-node
+   #:tensor-memory-id)
+  
+  (:export
+   #:Shape
+   #:Shape-Exp
    ))
 
 (in-package :abstractnode.graph)

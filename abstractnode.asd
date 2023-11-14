@@ -5,6 +5,9 @@
   :author      "hikettei <ichndm@gmail.com>"
   :licence     "MIT"
   :depends-on
-  ("abstractnode.graph")
-  ("abstractnode.compiler"))
+  ("abstractnode.graph"
+   "abstractnode.compiler")
+  :components
+  ((:file "./source/lisp-backend.lisp")
+   (:file "./source/gcc-backend.lisp")))
 

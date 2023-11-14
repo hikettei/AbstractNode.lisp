@@ -19,6 +19,8 @@ A Tiny and Portable DAG Compiler intended to be integrated into cl-waffe2.
 
 - No dependencies, works anywhere, eazy to write an extension
 
+- Multi-Threading Scheduling/Reordering/Performance Turning/In-place mutation
+
 ```lisp
 [cl-waffe             (Elegant Frontend)]
                  |
@@ -26,6 +28,16 @@ A Tiny and Portable DAG Compiler intended to be integrated into cl-waffe2.
                  |
         [abstractnode.graph]
 	[abstractnode.compiler]
+```
+
+When reimplementing backends to another accelerator, all users have to do is to implement these methods:
+
+```lisp
+- [method] compile-requirements
+- [method] compile-function-headers
+- [method] compile-lazy-index
+- [method] compile-iterator
+- [method] compile-instruction
 ```
 
 ```lisp
