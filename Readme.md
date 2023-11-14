@@ -39,3 +39,5 @@ A Tiny and Portable DAG Compiler intended to be integrated into cl-waffe2.
          ...))
 ```
 
+TODO: Lisp Backend
+

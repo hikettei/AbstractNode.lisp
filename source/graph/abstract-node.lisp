@@ -5,3 +5,5 @@
 
 (in-package :abstractnode.graph)
 
+
+;; (defun lazy-call ((AbstractNode) args ...)
