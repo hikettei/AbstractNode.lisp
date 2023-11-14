@@ -9,8 +9,7 @@
 		 form))
   (constraints nil  :type list)
   (step        step :type function)
-  (read-as     nil)
-  (id          (gensym "axis")))
+  (read-as     nil))
 
 (defmethod print-object ((lazyaxis LazyAxis) stream)
   (format stream "[~a]" (lazyaxis-form lazyaxis)))

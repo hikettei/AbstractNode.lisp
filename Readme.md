@@ -1,7 +1,7 @@
 
 # AbstractNode.lisp
 
-A Tiny and Portable DAG Compiler intended to be integrated into cl-waffe2.
+A Tiny and Portable DAG Compiler which is intended to be integrated into cl-waffe2.
 
 ## Goals
 
@@ -50,6 +50,8 @@ When reimplementing backends to another accelerator, all users have to do is to 
         `((:sin "sin")
          ...))
 ```
+
+AbstractTensor = Basically regarded as a 1D Array but multiple-dimensional
 
 TODO: Lisp Backend
 

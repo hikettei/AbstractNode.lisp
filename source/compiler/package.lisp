@@ -20,9 +20,11 @@ This compilation isn't necessary lazily; users can compile all operations first.
 
 In cl-waffe2, ALL MODELS ARE REPRESENTED BY THESE COMPONENTS:
    - [method] compile-requirements
-   - [method] compile-function-headers
+   - [method] compile-dtype
    - [method] compile-lazy-index
    - [method] compile-aref
+
+   - [method] compile-function-headers
    - [method] compile-iteration
    - [method] compile-instruction
 ")
@@ -38,7 +40,10 @@ In cl-waffe2, ALL MODELS ARE REPRESENTED BY THESE COMPONENTS:
   (:export
    #:compile-lazy-index
    #:compile-aref
+   #:compile-aref-helper
    #:compile-requirements
    #:compile-dtype
+   #:compile-iteration
+   #:compile-iteration-helper
    ))
 

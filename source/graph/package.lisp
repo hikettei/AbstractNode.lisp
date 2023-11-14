@@ -11,9 +11,19 @@ A Package dedicated to express the computation node comprised of two principle o
  - AbstractNode   -> A Struct representing operations in the network.
 ")
   (:use :cl)
-  ;;(:import-from
+  (:export
+   #:call
+   #:make-op
+   
+   #:AbstractNode
+   #:AbstractNode-name
+   #:AbstractNode-op
+   #:AbstractNode-in-args
+   #:AbstractNode-out-args
+   #:AbstractNode-system-ir-p
+   #:AbstractNode-In-Place-Mutation-P
+   #:AbstractNode-Next-Outputs)
 
-  ;; )
   (:export
    #:AbstractTensor
    #:make-scalar
@@ -26,12 +36,15 @@ A Package dedicated to express the computation node comprised of two principle o
    #:tensor-dtype
    #:tensor-variables
    #:tensor-node
-   #:tensor-memory-id)
+   #:tensor-memory-id
+   #:tensor-id)
   
   (:export
    #:Shape
    #:Shape-Exp
-   ))
+   )
+  ;; [TODO] LazyAxis
+  )
 
 (in-package :abstractnode.graph)
 

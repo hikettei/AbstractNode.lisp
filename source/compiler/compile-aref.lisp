@@ -4,7 +4,8 @@
 (defgeneric compile-aref (backend-indicator tensor &rest subscripts)
   (:documentation
    "## [generic] compile-aref
-Can be read as: tensor.memory-id[subscripts[a list of symbol/fixnum]]"))
+Can be read as: tensor.memory-id[subscripts[a list of symbol/fixnum]]
+"))
 
 (defmethod compile-aref ((backend-indicator t) tensor &rest subscripts)
   (declare (ignore tensor subscripts))

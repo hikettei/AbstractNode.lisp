@@ -6,8 +6,9 @@
   :licence     "MIT"
   :depends-on
   ("abstractnode.graph"
-   "abstractnode.compiler")
+   "abstractnode.compiler"
+   "abstractnode.apis")
   :components
-  ((:file "./source/lisp-backend.lisp")
-   (:file "./source/gcc-backend.lisp")))
+  ((:file "./source/lisp-backend")
+   (:file "./source/gcc-backend")))
 

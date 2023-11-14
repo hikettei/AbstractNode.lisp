@@ -8,7 +8,11 @@
 
 (in-package :abstractnode.gcc-backend)
 
-(defmethod compile-requirements ((backend-indicator (eql :gcc))) "")
+(defmethod compile-requirements ((backend-indicator (eql :gcc)))
+  "
+#include <sleef.h>
+#include <omp.h>"
+  )
 
 (defmethod compile-lazy-index ((backend-indicator (eql :gcc)) shape)
   "")

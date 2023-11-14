@@ -12,20 +12,47 @@
   (format nil "~a" shape))
 
 (defmethod compile-aref ((backend-indicator (eql :lisp)) tensor &rest subscripts)
-  (with-output-to-string (out)
-    (format out "(aref ~a " (tensor-memory-id tensor))
-    (dolist (s subscripts)
-      (format out "~a " s))
-    (format out ")")))
+  (format nil "(aref ~a ~a)"
+	  (tensor-memory-id tensor)
+	  (apply
+	   #'concatenate
+	   'string
+	   (butlast
+	    (loop for s in subscripts
+		  append
+		  `(,s " "))))))
 
-(defmethod compile-dtype ((backend-indicator (eql :lisp)) dtype)
-  (ecase dtype
-    (:double
-     "double-float")
-    (:float
-     "single-float")))
+(defmethod compile-dtype ((backend-indicator (eql :lisp)) dtype pointer-p)
+  (symbol-macrolet ((dtype-helper 
+		      (ecase dtype
+			(:double
+			 "double-float")
+			(:float
+			 "single-float"))))
+    (if pointer-p
+	(format nil "(simple-array ~a (*))" dtype-helper)
+	dtype-helper)))
 
-(print (abstractnode.compiler::compile-aref-helper
+(defmethod compile-iteration ((backend-indicator (eql :lisp))
+			      index
+			      from
+			      to
+			      by
+			      body)
+  (format nil "(loop for ~a of-type (unsigned-byte 64)
+    upfrom ~a
+    below ~a
+    by ~a do ~a)" index from to by body))
+
+(print (compile-iteration-helper
 	:lisp
+	"A"
+	0
+	10
+	2
+	"(+ 1 1)"))
+
+(print (abop:lazy-add
 	(make-tensor `(3 3) :float)
-	2 1))
+	(make-tensor `(3 3) :float)))
+

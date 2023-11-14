@@ -33,7 +33,10 @@
 
   (variables nil :type list)
   (node      nil)
-  (memory-id (gensym "TID") :type symbol))
+  ;; Memory-ID = variable name
+  ;; ID = ID dedicated to topological sorting
+  (memory-id (gensym "TID") :type symbol)
+  (id        (gensym "ID")  :type symbol))
 
 (defun make-scalar (storage dtype
 		    &key
@@ -49,6 +52,7 @@
 (defun make-tensor (shape dtype
 		    &key
 		      (layout :row)
+		      (order nil)
 		      (id (gensym "TID"))
 		      (variables nil))
 
@@ -60,11 +64,12 @@
    :storage nil
    :shape   (map 'list #'make-shape shape)
    :dtype   dtype
-   :order   (ecase layout
-	      (:row
-	       (range-list 0 (length shape) 1))
-	      (:column
-	       (range-list (length shape) 0 1)))
+   :order   (or order
+		(ecase layout
+		  (:row
+		   (range-list 0 (length shape) 1))
+		  (:column
+		   (range-list (length shape) 0 1))))
    :ranges  nil
    :variables variables
    :memory-id id))
