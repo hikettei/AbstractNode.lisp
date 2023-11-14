@@ -5,6 +5,11 @@
 ;; Memory-Locality Optimizing
 ;; Thread-Safe In-Place Mutation
 
+;; [TODO] LazyAxisとScalarに対する演算の統合;
+;;  LazyAxisとScalarのInterpreter/Compilerを両方用意するのは冗長
+;;  LazyAxisの実装をcompile-instructionsかどっかに統合する
+;; -> compile-lazy-axisを実装しないでOKになる
+
 (defun compile-instructions (backend-indicator bp nrank)
   ""
   )

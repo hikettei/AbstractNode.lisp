@@ -3,6 +3,8 @@
 
 A Tiny and Portable DAG Compiler which is intended to be integrated into cl-waffe2.
 
+Visit the `./source/lisp-backend.lisp` file to understand the goal of this project.
+
 ## Goals
 
 - Eazy to Interop with other languages via shared lib (e.g.: Implementing Python frontend using AbstractNode, from AbstractNode to shared library dedicated to the model.)

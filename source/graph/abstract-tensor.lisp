@@ -25,7 +25,7 @@
   "## [struct] AbstractTensor
 "
   (storage nil)
-  (scalar-p t    :type boolean)
+  (scalar-p nil  :type boolean)
 
   (shape  nil    :type Shape-T)
   (dtype  :float :type keyword)
