@@ -39,6 +39,7 @@ A Package dedicated to express the computation node comprised of two principle o
    #:tensor-variables
    #:tensor-node
    #:tensor-memory-id
+   #:tensor-input-p
    #:tensor-id
    #:tensor-detach-p)
   

@@ -34,7 +34,7 @@ where op is named as `name`"
 			   `(,(format
 			       nil
 			       "~a~a"
-			       (tensor-id tensor)
+			       (tensor-memory-id tensor)
 			       (tensor-shape tensor))
 			     " ")))))))
     

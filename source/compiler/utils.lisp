@@ -17,7 +17,7 @@
 		     (dolist (prev (tensor-variables v))
 		       (top-sort-helper prev (tensor-detach-p v)))
 		     (push v top-sort)))))
-      ;;#+sbcl(declare (inline top-sort-helper))
+      #+sbcl(declare (inline top-sort-helper))
       (dolist (toplevel toplevels)
 	(top-sort-helper toplevel (tensor-detach-p toplevel)))
       (map 'list #'tensor-node (reverse top-sort)))))

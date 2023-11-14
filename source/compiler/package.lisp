@@ -28,7 +28,7 @@ In cl-waffe2, ALL MODELS ARE REPRESENTED BY THESE COMPONENTS:
    - [method] compile-iteration
    - [method] compile-instruction
 ")
-  (:use :cl :AbstractNode.graph)
+  (:use :cl :AbstractNode.graph #:alexandria)
 
   ;; Conditions
   (:export

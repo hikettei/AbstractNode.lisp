@@ -35,6 +35,7 @@
   (variables nil :type list)
   (node      nil)
 
+  (input-p  nil  :type boolean)
   (detach-p nil  :type boolean)
   ;; Memory-ID = variable name
   ;; ID = ID dedicated to topological sorting
@@ -83,6 +84,7 @@
 
 (defun make-tensor (shape dtype
 		    &key
+		      (input-p nil)
 		      (layout :row)
 		      (order nil)
 		      (id (gensym "TID"))
@@ -93,6 +95,7 @@
 	  "make-tensor: layout should be given as one of: :row :column. butgot ~a" layout)
   
   (make-AbstractTensor
+   :input-p input-p
    :storage nil
    :shape   (map 'list #'make-shape shape)
    :dtype   dtype

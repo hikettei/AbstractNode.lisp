@@ -52,12 +52,13 @@
 	2
 	"(+ 1 1)"))
 
-(print (compile-with-backend
-	:lisp
-	(abop:lazy-add
-	 (make-tensor `(3 3) :float)
-	 (abop:lazy-mul
-	  (make-tensor `(3 3) :float)
-	  (make-tensor `(3 3) :float)))))
-	  
+(print
+ (time
+  (compile-with-backend
+   :lisp
+   (abop:lazy-add    
+    (abop:lazy-mul
+     (make-tensor `(3 3) :float :input-p t)
+     (make-tensor `(3 3) :float))
+    (make-tensor `(3 3) :float)))))
 
