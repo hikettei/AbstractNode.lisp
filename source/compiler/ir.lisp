@@ -5,9 +5,33 @@
 ;; Memory-Locality Optimizing
 ;; Thread-Safe In-Place Mutation
 
-(defun compile-ir (backend-indicator ir)
-  ir
+(defun compile-instructions (backend-indicator bp nrank)
+  ""
   )
+
+(defun compile-blueprint (backend-indicator name bp &aux (nrank (length (blueprint-iterators bp))))
+  (declare (type blueprint bp))
+  (symbol-macrolet ((iterators
+		      (blueprint-iterators bp)))
+    (labels ((helper (rank)
+	       (if (= rank (1- nrank))
+		   (compile-instructions
+		    backend-indicator
+		    bp
+		    nrank)
+		   (compile-iteration-helper
+		    backend-indicator
+		    (iter-n rank)
+		    (iterator-from (nth rank iterators))
+		    (iterator-to   (nth rank iterators))
+		    (iterator-by   (nth rank iterators))
+		    (helper (1+ rank))))))
+      (compile-function
+       backend-indicator
+       name
+       (bp-variables (blueprint-instructions bp))
+       (blueprint-dynamic-shapes bp)
+       (helper 0)))))
 
 (defun overwrite-memory-id! (sorted-ir from-id to-id)
   (declare (type list sorted-ir)
@@ -16,7 +40,10 @@
     (dolist (arg `(,@(abstractnode-in-args  ir)
 		   ,@(abstractnode-out-args ir)))
       (when (eql (tensor-memory-id arg) from-id)
-	(setf (tensor-memory-id arg) to-id)))))		   
+	(setf (tensor-memory-id arg) to-id)))))
+
+(defun shared-buffer-schedule! (sorted-ir)
+  sorted-ir)
 
 (defun apply-in-place-mutation! (sorted-ir
 				 &aux
@@ -81,21 +108,30 @@ IR:
 (defun compile-with-backend (backend &rest tensors)
   (let* ((sorted-ir  (topological-sort tensors))
 	 (sorted-ir  (delete-if #'abstractnode-system-ir-p sorted-ir))
-	 (sorted-ir  (apply-in-place-mutation! sorted-ir)))
-    (with-output-to-string (out)
-      ;; First, collecting all dynamic shaped used in the node
-      ;; Secondly, scheduling and gathering to find out functions needs to be compiled
-      ;; Reduce the amount of compiled code by caching by LUT
-      ;; (Optional) Autograd      
-      (compile-requirements backend)
+	 (sorted-ir  (apply-in-place-mutation! sorted-ir))
+	 (sorted-ir  (shared-buffer-schedule!  sorted-ir))
+	 (id->cname (make-hash-table :test #'equal))
+	 (bp-table  (make-hash-table :test #'equal)))
+    (multiple-value-bind (blueprints dynamic-shapes) (make-scheduling sorted-ir)
+      (loop for bp in blueprints do
+	(setf (gethash (blueprint-id bp) id->cname) (gensym "OP")
+	      (gethash (blueprint-id bp) bp-table)  bp))	    
+      (with-output-to-string (out)
+	;; First, collecting all dynamic shaped used in the node
+	;; Secondly, scheduling and gathering to find out how many functions (and blueprint) needs to be compiled
+	;; Reduce the amount of compiled code by caching by LUT
+	;; (Optional) Autograd
+	(format out "~a" (compile-requirements backend))
 
-      ;; [TODO] Tensor.Chain-p = whose node=nil is a ExistTensor
-      ;; Otherwise -> InputTensor
-      
-      ;; [TODO] In-Place Mutation
-      ;; [TODO] Compiling to Lisp/GCC
-      (print sorted-ir)
-      )))
+	;; (compile-function-declarations )
+
+	(loop for bp being the hash-values of bp-table do
+	  (format out "~a~%~%"
+		  (compile-blueprint
+		   backend
+		   (gethash (blueprint-id bp) id->cname)
+		   bp)))
+	))))
 
 (defun compute-with-backend (backend &rest tensors)
 

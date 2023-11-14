@@ -9,10 +9,12 @@
    (:file "conditions")
    (:file "ir")
    (:file "utils")
+   (:file "scheduling")
    (:file "lazy-index-compiler")
    (:file "compile-requirements")
    (:file "compile-aref")
    (:file "compile-iteration")
+   (:file "compile-function")
    (:file "compile-dtype")
    (:file "backend-template")))
 

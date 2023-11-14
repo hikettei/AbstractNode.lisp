@@ -30,5 +30,5 @@ for (uint32_t index=from; from <= to ; index++by) {
    (compile-lazy-index backend-indicator from)
    (compile-lazy-index backend-indicator to)
    (compile-lazy-index backend-indicator by)
-   (compile-ir backend-indicator body)))
+   body))
 

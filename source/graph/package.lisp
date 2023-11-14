@@ -44,6 +44,7 @@ A Package dedicated to express the computation node comprised of two principle o
    #:tensor-detach-p)
   
   (:export
+   #:Shape-p
    #:Shape
    #:Shape-Exp
    )

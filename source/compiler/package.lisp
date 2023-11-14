@@ -46,5 +46,6 @@ In cl-waffe2, ALL MODELS ARE REPRESENTED BY THESE COMPONENTS:
    #:compile-dtype
    #:compile-iteration
    #:compile-iteration-helper
+   #:compile-function
    ))
 
