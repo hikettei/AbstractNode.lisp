@@ -30,7 +30,10 @@
   ;; [TODO] Visible-Shape/Original-Shape
 
   (orig-shape nil       :type Shape-T)
-  (shape  nil           :type Shape-T)
+  (shape      nil       :type Shape-T)
+  (stride     nil       :type list)
+  (layout     nil)
+  
   (dtype  :float        :type keyword)
   (order  nil           :type list)
   (broadcasted-axis nil :type list)
@@ -78,21 +81,21 @@
 
 (defun make-scalar (storage dtype
 		    &key
-		      (id (gensym "TID"))
+		      (memory-id (gensym "TID"))
 		      (variables nil))
   (make-AbstractTensor
    :storage storage
    :scalar-p T
    :dtype dtype
    :variables variables
-   :memory-id id))
+   :memory-id memory-id))
 
 (defun make-tensor (shape dtype
 		    &key
 		      (input-p nil)
 		      (layout :row)
 		      (order nil)
-		      (id (gensym "TID"))
+		      (memory-id (gensym "TID"))
 		      (variables nil)
 		      (broadcasted-axis nil))
 
@@ -103,17 +106,14 @@
   (make-AbstractTensor
    :input-p input-p
    :storage nil
+   :layout layout
+   :stride     (make-tensor-stride shape layout)
    :orig-shape (map 'list #'make-shape shape)
    :shape      (map 'list #'make-shape shape)
    :dtype      dtype
-   :order      (or order
-	           (ecase layout
-		     (:row
-		      (reverse (range-list 0 (length shape) 1)))
-		     (:column
-		      (range-list 0 (length shape) 1))))
+   :order      (or order (range-list 0 (length shape) 1))
    :broadcasted-axis broadcasted-axis
    :ranges  nil
    :variables variables
-   :memory-id id))
+   :memory-id memory-id))
 

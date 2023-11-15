@@ -48,7 +48,7 @@
   (iterators)
   (instructions))
 
-;; [FixME] Cacheの作成方法, Stride/OffsetsをConsidering
+;; [FixME] Cacheの作成方法, Stride/Offsetsを考慮する
 ;; [TODO] OpFusion, Multi-threading scheduling
 (defun make-scheduling (backend-indicator sorted-ir)
   (let ((dynamic-shapes (dynamic-shape-symbols sorted-ir))

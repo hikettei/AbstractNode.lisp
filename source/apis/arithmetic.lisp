@@ -12,8 +12,9 @@
   (values
    (make-tensor (tensor-shape (car args))
 		(tensor-dtype (car args))
-		:order  (tensor-order  (car args))
-		:id     (tensor-id     (car args)))))
+		:layout    (tensor-layout (car args))
+		:order     (tensor-order  (car args))
+		:memory-id (tensor-memory-id     (car args)))))
 
 (export `(lazy-copy lazy-move))
 (defun lazy-move (move-to move-from &key (force nil))
@@ -29,7 +30,8 @@
   (lazy-move
    (make-tensor (tensor-shape tensor)
 		(tensor-dtype tensor)
-		:order (tensor-order tensor)
+		:layout  (tensor-layout tensor)
+		:order   (tensor-order tensor)
 		:input-p (tensor-input-p tensor))
    tensor
    :force force))

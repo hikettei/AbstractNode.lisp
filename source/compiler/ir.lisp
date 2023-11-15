@@ -5,9 +5,7 @@
 ;; Memory-Locality Optimizing
 ;; Thread-Safe In-Place Mutation
 ;; [TODO] Loop Collapsing
-;; 全部の命令 = kernel-rank=1に制限
-;; 1. out-toにsetf
-;; 2. 命令の漢薬
+
 (defun compile-bp-instructions (backend-indicator bp)
   ""
   ;; (op arg1 arg2 arg3 ...)
@@ -25,16 +23,13 @@
 		    (tensor-memory-id obj)))
 	       (let ((strides))
 		 (do-ranked-tensor (rank act-size _ bc range) obj
-		   (push `(:*
-			   ,(compile-lazy-index backend-indicator (make-shape act-size))
-			   ,@strides)
-			 strides))
+		   (push (nth rank (tensor-stride obj)) strides))
 		 (setq strides
 		       `(:+
 			 ,@(loop for nrank upfrom 0
 				 for stride in (reverse strides)
 				 collect
-				 `(:* ,(iter-n backend-indicator nrank) ,stride))))			       
+				 `(:* ,(iter-n backend-indicator nrank) ,stride))))
 		 (compile-aref
 		  backend-indicator
 		  obj
@@ -47,20 +42,29 @@
 	      (in-args (map
 			'list
 			#'parse-arg-helper
-			(abstractnode-in-args inst))))
-	  (format out "~a"
-		  (apply
-		   #'compile-instruction
-		   backend-indicator
-		   op
-		   in-args)))))))
+			(abstractnode-in-args inst)))
+	      (out-args (map
+			 'list
+			 #'parse-arg-helper
+			 (abstractnode-out-args inst))))
+	  (dolist (out-arg out-args)
+	    (format out "~a"
+		    (compile-instruction
+		     backend-indicator
+		     :=
+		     out-arg
+		     (apply
+		      #'compile-instruction
+		      backend-indicator
+		      op
+		      in-args)))))))))
 
 (defun compile-blueprint (backend-indicator name bp &aux (nrank (length (blueprint-iterators bp))))
   (declare (type blueprint bp))
   (symbol-macrolet ((iterators
 		      (blueprint-iterators bp)))
     (labels ((helper (rank)
-	       (if (= rank (1- nrank))
+	       (if (= rank nrank)
 		   (compile-bp-instructions
 		    backend-indicator
 		    bp)

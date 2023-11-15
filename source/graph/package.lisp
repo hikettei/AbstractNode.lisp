@@ -34,6 +34,8 @@ A Package dedicated to express the computation node comprised of two principle o
    #:tensor-storage
    #:tensor-scalar-p
    #:tensor-shape
+   #:tensor-stride
+   #:tensor-layout
    #:tensor-ranges
    #:tensor-order
    #:tensor-dtype

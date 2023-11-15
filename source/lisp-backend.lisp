@@ -56,7 +56,7 @@
   (with-output-to-string (out)
     (format out "(defun ~a ("  name)
     (loop for tensor in vars do
-      (format out "~a " (tensor-id tensor)))
+      (format out "~a " (tensor-memory-id tensor)))
 
     (loop for shape  in dynamic-shapes do
       (format out "~a " shape))
@@ -67,7 +67,7 @@
 	      (compile-dtype backend-indicator
 			     (tensor-dtype tensor)
 			     (not (tensor-scalar-p tensor)))
-	      (tensor-id tensor)))
+	      (tensor-memory-id tensor)))
     (loop for shape  in dynamic-shapes do
       (format out "~%(type ~a ~a)"
 	      :uint32
@@ -87,7 +87,9 @@
   (def :/ "/")
   (def := "setf"))
 
+;; max/argmaxをどうやってvectorizeする？
 ;; reduce = broadcastで表現
+
 (print
  (time
   (compile-with-backend
@@ -97,4 +99,29 @@
      (make-tensor `(5 4 3) :float :input-p t)
      (make-tensor `(5 4 3) :float))
     (make-tensor `(5 4 3) :float)))))
+
+(defun OP1697 (TID1688 TID1683 )
+  (declare
+   (optimize (speed 3))
+   (type (simple-array single-float (*)) TID1688)
+   (type (simple-array single-float (*)) TID1683))
+  (loop for gid0 of-type (unsigned-byte 64)
+	upfrom 0
+	  below 5
+	by 1 do
+	  (loop for gid1 of-type (unsigned-byte 64)
+		upfrom 0
+		  below 4
+		by 1 do
+		  (loop for gid2 of-type (unsigned-byte 64)
+			upfrom 0
+			  below 3
+			by 1 do
+			  (setf (aref TID1683 (+ (* gid0 1) (* gid1 5) (* gid2 20))) (+ (aref TID1683 (+ (* gid0 1) (* gid1 5) (* gid2 20))) (aref TID1688 (+ (* gid0 1) (* gid1 5) (* gid2 20)))))))))
+
+(let ((a (make-array (* 5 4 3) :initial-element 1.0 :element-type 'single-float))
+      (b (make-array (* 5 4 3) :initial-element 2.0 :element-type 'single-float)))
+  (OP1697 a b)
+  (print b))
+
 
