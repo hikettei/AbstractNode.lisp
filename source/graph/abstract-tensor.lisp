@@ -9,7 +9,7 @@
 	    (:constructor %make-shape (expression)))
   "## [struct] LazyAxis
 "
-  (exp   (make-lazyaxis expression) :type (or fixnum symbol list)))
+  (exp   (make-lazyaxis expression)))
 
 (defmethod print-object ((shape Shape) stream)
   (format stream "{Shape: ~a}" (shape-exp shape)))
@@ -25,11 +25,16 @@
   "## [struct] AbstractTensor
 "
   (storage nil)
-  (scalar-p nil  :type boolean)
+  (scalar-p nil         :type boolean)
 
-  (shape  nil    :type Shape-T)
-  (dtype  :float :type keyword)
-  (order  nil    :type list)
+  ;; [TODO] Visible-Shape/Original-Shape
+
+  (orig-shape nil       :type Shape-T)
+  (shape  nil           :type Shape-T)
+  (dtype  :float        :type keyword)
+  (order  nil           :type list)
+  (broadcasted-axis nil :type list)
+  
   (ranges nil    :type list)
 
   (variables nil :type list)
@@ -88,7 +93,8 @@
 		      (layout :row)
 		      (order nil)
 		      (id (gensym "TID"))
-		      (variables nil))
+		      (variables nil)
+		      (broadcasted-axis nil))
 
   (assert (member layout `(:row :column))
 	  ()
@@ -97,14 +103,16 @@
   (make-AbstractTensor
    :input-p input-p
    :storage nil
-   :shape   (map 'list #'make-shape shape)
-   :dtype   dtype
-   :order   (or order
-		(ecase layout
-		  (:row
-		   (range-list 0 (length shape) 1))
-		  (:column
-		   (range-list (length shape) 0 1))))
+   :orig-shape (map 'list #'make-shape shape)
+   :shape      (map 'list #'make-shape shape)
+   :dtype      dtype
+   :order      (or order
+	           (ecase layout
+		     (:row
+		      (reverse (range-list 0 (length shape) 1)))
+		     (:column
+		      (range-list 0 (length shape) 1))))
+   :broadcasted-axis broadcasted-axis
    :ranges  nil
    :variables variables
    :memory-id id))

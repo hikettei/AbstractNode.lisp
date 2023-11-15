@@ -1,8 +1,6 @@
 
 (in-package :abstractnode.compiler)
 
-;; 1. compile-instruction backend-indicator op-indicator args を実装する
-
 (defun compile-lazy-index (backend-indicator shape)
   "
 ## [function] compile-lazy-index
@@ -27,6 +25,8 @@ Inputs:
      (shape-exp shape))
     (symbol
      (compile-symbol backend-indicator (shape-exp shape)))
+    (string
+     (shape-exp shape))
     (list
      (let ((op   (car (shape-exp shape)))
 	   (args

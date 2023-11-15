@@ -14,6 +14,7 @@ form       := (op form1 form2 ... formN)
 
 where op = a keyword indicating the operation.
 "
+
   (labels ((confirm-helper (exp)
 	     (typecase exp
 	       (list
@@ -21,6 +22,7 @@ where op = a keyword indicating the operation.
 			()
 			"make-lazyaxis: car should be a keyword but got ~a" (car exp))
 		(mapc #'confirm-helper (cdr exp))))))
-    (confirm-helper expression))
-  expression)
+    (when (listp expression)
+      (confirm-helper expression))
+    expression))
 

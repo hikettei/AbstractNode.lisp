@@ -26,3 +26,24 @@ The method is a one of compiler-components translating `op` into the string for 
    :op-type (format nil "compile-instruction (where op=~a)" op)
    :backend backend-indicator))
 
+(macrolet ((def (op lisp-op)
+	     `(defmethod compile-instruction
+		  :around
+		  ((backend-indicator t)
+		   (op (eql ,op))
+		   &rest args)
+		(if (every #'numberp args)
+		    (apply ,lisp-op args)
+		    (call-next-method)))))
+  ;; With regard to following instructions,
+  ;; the compiler try to compute the result in advance as long as all arguments are scalar numbers
+  ;; e.g.: (:+ 1 1) -> 2
+  (def :+ #'+)
+  (def :- #'-)
+  (def :* #'*)
+  (def :/ #'/)
+
+  (def :max #'max)
+  (def :min #'min)
+  
+  )

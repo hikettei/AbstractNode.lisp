@@ -26,6 +26,7 @@ A Package dedicated to express the computation node comprised of two principle o
    #:AbstractNode-Next-Outputs)
 
   (:export
+   #:do-ranked-tensor
    #:AbstractTensor
    #:copy-tensor
    #:make-scalar
@@ -41,6 +42,8 @@ A Package dedicated to express the computation node comprised of two principle o
    #:tensor-memory-id
    #:tensor-input-p
    #:tensor-id
+   #:tensor-broadcasted-axis
+   #:tensor-orig-shape
    #:tensor-detach-p)
   
   (:export

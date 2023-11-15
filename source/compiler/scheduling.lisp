@@ -1,7 +1,8 @@
 
 (in-package :abstractnode.compiler)
 
-;; [TODO optmize]
+;; [TODO] Much clever way to implement the all code below:
+
 (defun dynamic-shape-symbols (sorted-ir)
   (let ((dynamic-shapes))    
     (dolist (IR sorted-ir)

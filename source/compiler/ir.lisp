@@ -4,16 +4,56 @@
 ;; Topological Sorting
 ;; Memory-Locality Optimizing
 ;; Thread-Safe In-Place Mutation
-
-;; [TODO] LazyAxisとScalarに対する演算の統合;
-;;  LazyAxisとScalarのInterpreter/Compilerを両方用意するのは冗長
-;;  LazyAxisの実装をcompile-instructionsかどっかに統合する
-;; -> compile-lazy-axisを実装しないでOKになる
-;; 先にScalarTensorのコンパイルを実装する->LazyAxisをそっちで実装
-
-(defun compile-instructions (backend-indicator bp nrank)
+;; [TODO] Loop Collapsing
+;; 全部の命令 = kernel-rank=1に制限
+;; 1. out-toにsetf
+;; 2. 命令の漢薬
+(defun compile-bp-instructions (backend-indicator bp)
   ""
-  )
+  ;; (op arg1 arg2 arg3 ...)
+  ;; implement it anyway; later considering optimizations
+
+  (flet ((parse-arg-helper (obj)
+	   (declare (type AbstractTensor obj))
+	   (if (tensor-scalar-p obj)
+	       (if (tensor-storage obj)
+		   (compile-lazy-index
+		    backend-indicator
+		    (make-shape (tensor-storage obj)))
+		   (compile-symbol
+		    backend-indicator
+		    (tensor-memory-id obj)))
+	       (let ((strides))
+		 (do-ranked-tensor (rank act-size _ bc range) obj
+		   (push `(:*
+			   ,(compile-lazy-index backend-indicator (make-shape act-size))
+			   ,@strides)
+			 strides))
+		 (setq strides
+		       `(:+
+			 ,@(loop for nrank upfrom 0
+				 for stride in (reverse strides)
+				 collect
+				 `(:* ,(iter-n backend-indicator nrank) ,stride))))			       
+		 (compile-aref
+		  backend-indicator
+		  obj
+		  (compile-lazy-index
+		   backend-indicator
+		   (make-shape strides)))))))
+    (with-output-to-string (out)
+      (dolist (inst (blueprint-instructions bp))
+	(let ((op      (abstractnode-op inst))
+	      (in-args (map
+			'list
+			#'parse-arg-helper
+			(abstractnode-in-args inst))))
+	  (format out "~a"
+		  (apply
+		   #'compile-instruction
+		   backend-indicator
+		   op
+		   in-args)))))))
 
 (defun compile-blueprint (backend-indicator name bp &aux (nrank (length (blueprint-iterators bp))))
   (declare (type blueprint bp))
@@ -21,10 +61,9 @@
 		      (blueprint-iterators bp)))
     (labels ((helper (rank)
 	       (if (= rank (1- nrank))
-		   (compile-instructions
+		   (compile-bp-instructions
 		    backend-indicator
-		    bp
-		    nrank)
+		    bp)
 		   (compile-iteration-helper
 		    backend-indicator
 		    (compile-symbol backend-indicator (iter-n backend-indicator rank))
