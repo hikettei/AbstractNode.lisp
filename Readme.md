@@ -57,3 +57,7 @@ AbstractTensor = Basically regarded as a 1D Array but multiple-dimensional
 
 TODO: Lisp Backend
 
+TODO: No alexandria dependencies
+
+# References
+

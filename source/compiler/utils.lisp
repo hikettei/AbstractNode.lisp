@@ -22,25 +22,28 @@
 	(top-sort-helper toplevel (tensor-detach-p toplevel)))
       (map 'list #'tensor-node (reverse top-sort)))))
 
-(defun blueprint2fname (blueprint)
-  (format nil "~a~a"
-	  (blueprint-name blueprint)
-	  (apply
-	   #'concatenate
-	   'string
-	   (butlast
-	    (loop for iter in (blueprint-iterators blueprint)
-		  append
-		  `(,(format nil "~a" (iterator-rank iter))
-		    "_"
-		    ,(format nil "~a" (iterator-from iter))
-		    "_"
-		    ,(format nil "~a" (iterator-to   iter))
-		    "_"
-		    ,(format nil "~a" (iterator-by iter))
-		    "_"))))))
+(defun blueprint2fname (backend-indicator blueprint)
+  (compile-symbol
+   backend-indicator
+   (format nil "~a~a"
+	   (blueprint-name blueprint)
+	   (apply
+	    #'concatenate
+	    'string
+	    (butlast
+	     (loop for iter in (blueprint-iterators blueprint)
+		   append
+		   `(,(format nil "~a" (iterator-rank iter))
+		     "_"
+		     ,(format nil "~a" (iterator-from iter))
+		     "_"
+		     ,(format nil "~a" (iterator-to   iter))
+		     "_"
+		     ,(format nil "~a" (iterator-by iter))
+		     "_")))))))
 
-(defun iter-n (n) (format nil "grid~a" n))
+(defun iter-n (backend-indicator n)
+  (compile-symbol backend-indicator (format nil "grid~a" n)))
 
 (defun bp-variables (insts)
   (let ((vars))
@@ -48,3 +51,4 @@
       (dolist (var `(,@(abstractnode-in-args ir)))
 	(push var vars)))
     (remove-duplicates vars :key #'tensor-memory-id)))
+

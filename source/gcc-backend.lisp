@@ -17,5 +17,5 @@
 (defmethod compile-lazy-index ((backend-indicator (eql :gcc)) shape)
   "")
 
-(defmethod compile-aref ((backend-indicator (eql :gcc)) tensor &rest subscripts)
+(defmethod compile-aref ((backend-indicator (eql :gcc)) tensor index)
   "")

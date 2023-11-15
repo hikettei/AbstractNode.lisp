@@ -1,9 +1,7 @@
 
 (asdf:defsystem :abstractnode.graph
   :author      "hikettei <ichndm@gmail.com>"
-  :depends-on (:trivia
-	       :alexandria
-	       :cl-environments)
+  :depends-on (:alexandria)
   :serial t
   :components
   ((:file "package")

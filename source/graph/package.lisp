@@ -45,10 +45,9 @@ A Package dedicated to express the computation node comprised of two principle o
   
   (:export
    #:Shape-p
+   #:make-shape
    #:Shape
-   #:Shape-Exp
-   )
-  ;; [TODO] LazyAxis
+   #:Shape-Exp)
   )
 
 (in-package :abstractnode.graph)

@@ -1,6 +1,7 @@
 
 (in-package :abstractnode.compiler)
 
+;; [TODO optmize]
 (defun dynamic-shape-symbols (sorted-ir)
   (let ((dynamic-shapes))    
     (dolist (IR sorted-ir)
@@ -16,10 +17,10 @@
 	      (push subject dynamic-shapes))))))
     (delete-duplicates dynamic-shapes)))
 
-(defun optimize-need-compiled-p (blueprints)
+(defun optimize-need-compiled-p (backend-indicator blueprints)
   (let ((seen (make-hash-table :test #'equal)))
     (loop for bp in blueprints do
-      (setf (blueprint-id bp) (blueprint2fname bp)))
+      (setf (blueprint-id bp) (blueprint2fname backend-indicator bp)))
     (loop for bp in blueprints do
       (if (null (gethash (blueprint-id bp) seen))
 	  (setf (gethash (blueprint-id bp) seen) t)
@@ -48,7 +49,7 @@
 
 ;; [FixME] Cacheの作成方法, Stride/OffsetsをConsidering
 ;; [TODO] OpFusion, Multi-threading scheduling
-(defun make-scheduling (sorted-ir)
+(defun make-scheduling (backend-indicator sorted-ir)
   (let ((dynamic-shapes (dynamic-shape-symbols sorted-ir))
 	(blueprints))
 
@@ -60,7 +61,7 @@
 	     :instructions (list ir))
 	    blueprints))
 
-    (optimize-need-compiled-p blueprints)
+    (optimize-need-compiled-p backend-indicator blueprints)
     
     (values (reverse blueprints) dynamic-shapes)))
 

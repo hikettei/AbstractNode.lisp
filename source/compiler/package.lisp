@@ -3,30 +3,21 @@
 
 (defpackage :abstractnode.compiler
   (:documentation
-   "This package provides an abstract compiler dedicated to matrix operation.
-Operations are consisted of two factors:
-   [Iterator] {
-      [Instruction]
-   }
+   "
+## [package] abstractnode.compiler
 
-User-extended backends are have to follow instruction given this package.
+This package provides an user-extensible compiler dedicated to matrix operations.
 
-Overall, backends must write codes like:
-[Requirements (e.g.: include)]
-[Function Declarations (e.g.: headers)]
-[Operation Implementations (e.g.: for ...)]
-
-This compilation isn't necessary lazily; users can compile all operations first.
-
-In cl-waffe2, ALL MODELS ARE REPRESENTED BY THESE COMPONENTS:
+To extend AbstractNode compiler to any devices you like, all users have to do is to extend these methods (we call it compiler-components).
    - [method] compile-requirements
    - [method] compile-dtype
-   - [method] compile-lazy-index
+   - [method] compile-symbol
    - [method] compile-aref
-
-   - [method] compile-function-headers
-   - [method] compile-iteration
+   - [method] compile-function
    - [method] compile-instruction
+
+   - [method] compile-iteration
+   
 ")
   (:use :cl :AbstractNode.graph #:alexandria)
 
@@ -39,6 +30,8 @@ In cl-waffe2, ALL MODELS ARE REPRESENTED BY THESE COMPONENTS:
    #:compute-with-backend)  
   
   (:export
+   #:compile-symbol
+   #:compile-instruction
    #:compile-lazy-index
    #:compile-aref
    #:compile-aref-helper

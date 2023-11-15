@@ -12,9 +12,11 @@
    (:file "scheduling")
    (:file "lazy-index-compiler")
    (:file "compile-requirements")
+   (:file "compile-instruction")
    (:file "compile-aref")
    (:file "compile-iteration")
    (:file "compile-function")
+   (:file "compile-symbol")
    (:file "compile-dtype")
    (:file "backend-template")))
 

@@ -8,12 +8,16 @@
 ```lisp
 (compile-iteration backend-indicator index from to by body)
 ```
-An abstract form which corresponds with:
+
+The method compile-iteration is a one of compiler-components generating iterations.
+
+The method should return the string for a certain backend, which is the equivalent to the following C code:
 ```lisp
-for (uint32_t index=from; from <= to ; index++by) {
-    body
+for (uint32_t `index`=`from`; `index` <= `to` ; `index`++`by`) {
+    `body`
 }
 ```
+where `index`, `from`, `to`, `by`, and `body` are the arguments given by the method which is already compiled so that the string which can be inserted directly.
 "))
 
 
@@ -26,9 +30,9 @@ for (uint32_t index=from; from <= to ; index++by) {
 (defun compile-iteration-helper (backend-indicator index from to by body)
   (compile-iteration
    backend-indicator
-   index
-   (compile-lazy-index backend-indicator from)
-   (compile-lazy-index backend-indicator to)
-   (compile-lazy-index backend-indicator by)
+   (compile-symbol backend-indicator index)
+   (compile-lazy-index backend-indicator (make-shape from))
+   (compile-lazy-index backend-indicator (make-shape to))
+   (compile-lazy-index backend-indicator (make-shape by))
    body))
 

@@ -9,7 +9,7 @@
 	    (:constructor %make-shape (expression)))
   "## [struct] LazyAxis
 "
-  (exp   (make-lazyaxis expression) :type (or fixnum list symbol LazyAxis)))
+  (exp   (make-lazyaxis expression) :type (or fixnum symbol list)))
 
 (defmethod print-object ((shape Shape) stream)
   (format stream "{Shape: ~a}" (shape-exp shape)))
@@ -108,8 +108,4 @@
    :ranges  nil
    :variables variables
    :memory-id id))
-
-;; todo: implementing arange by myself
-;; Index-Components allowing to access the current position in the iteration
-;; Arange can be implemented like: Empty-Array <- Index-Components
 

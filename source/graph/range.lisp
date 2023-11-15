@@ -7,7 +7,7 @@
       b
       (if (eql b 0)
 	  a
-	  `(max ,a ,b))))
+	  `(:max ,a ,b))))
 
 (defun lazy-min (a b)
   "Given the condition that dynamic shape is given as positive fixnum, this function lazily computes minimum value of a and b."
@@ -15,20 +15,20 @@
       a
       (if (eql b 0)
 	  b
-	  `(min ,a ,b))))
+	  `(:min ,a ,b))))
 
 (defstruct (Range
 	    (:conc-name range-)
 	    (:constructor make-range (from to &optional (step 1))))
-  (from from :type (or fixnum list symbol LazyAxis))
-  (to   to   :type (or fixnum list symbol LazyAxis))
-  (step step :type (or fixnum list symbol LazyAxis)))
+  (from from :type (or fixnum list symbol))
+  (to   to   :type (or fixnum list symbol))
+  (step step :type fixnum))
 
 (defun lazy-range-size (range)
   (declare (type range range))
   (make-lazyaxis
-   `(floor
-     (- ,(range-to range) ,(range-from range))
+   `(:floor
+     (:- ,(range-to range) ,(range-from range))
      ,(range-step range))))
 
 (defmethod print-object ((obj Range) stream)
@@ -46,19 +46,18 @@
 Basically can be computed in this formula:
     floor(ABS(from - to) // STEP)"
   (declare (type range range))
-  (if (and (numberp (range-step range))
-	   (=       (range-step range) 1))
-      (if (and (numberp (range-from range))
-	       (= 0     (range-from range)))
+  (if (= (range-step range) 1)
+      (if (and (numberp  (range-from range))
+	       (= 0      (range-from range)))
 	  (make-lazyaxis (range-to range))
 	  (make-lazyaxis
-	   `(abs (- ,(range-from range)
-		    ,(range-to   range)))))
+	   `(:- ,(range-to range)
+		,(range-from range))))
       (make-lazyaxis
-       `(floor
-	 (abs (- ,(range-from range)
-		 ,(range-to   range)))
-	 (abs ,(range-step range))))))
+       `(:floor
+	 (:- ,(range-to range)
+	     ,(range-from   range))
+	 ,(range-step range)))))
 
 (defun range (from &optional (to `(1+ ,from)) (step 1))
   "
@@ -80,21 +79,16 @@ Creates a range: `[from, to) where step=step`. This structure is dedicated to a 
 	   (not (= step 0)))
 	  ()
 	  "range: do not create a range whose step is 0 otherwise loop continues forever.")
+
+  (assert (integerp step)
+	  ()
+	  "range: Assertion failed because step should be given as an integer butgot: ~a" step)
   ;; [TODO] Inserting LazyAssertion which is: from > to
   (when (or (symbolp from)
 	    (symbolp to))
     nil)
   
   (make-range from to step))
-
-(defun ifelse (condition then else) (if condition then else))
-(defun lazy-ifelse (condition then else)
-  (let ((condition (make-lazyaxis condition)))
-    (if (eql condition T)
-	then
-	(if (eql condition nil)
-	    else
-	    `(ifelse ,condition ,then ,else)))))
 
 (defun .range (range2 &optional (range1 nil))
   "
@@ -148,21 +142,19 @@ i.e.:
 	 (step1   (range-step range1))
 	 (step2   (range-step range2))
 
-	 (offset (lazy-ifelse
-		  `(> ,step1 0)
-		  (lazy-min upfrom1 below1)
-		  (lazy-max upfrom1 below1)))
+	 (offset (if (> step1 0)
+		     (lazy-min upfrom1 below1)
+		     (lazy-max upfrom1 below1)))
 
-	 (from  `(+ ,offset (* (signum ,step1) ,upfrom2)))
-	 (to    `(+ ,offset (* (signum ,step1) ,below2)))
+	 (from  `(:+ ,offset (:* ,(signum step1) ,upfrom2)))
+	 (to    `(:+ ,offset (:* ,(signum step1) ,below2)))
 	 
 	 (from1 (lazy-min from to))
 	 (to1   (lazy-max from to))
-	 (step  `(* (signum ,step2) (lcm ,step1 ,step2))))
+	 (step  (* (signum step2) (lcm step1 step2))))
     ;; [TODO]
     ;; - Adding an assertion
     ;; - Adding a lazy assertion if one of from/to/step is a symbol.
     (let ((result (range from1 to1 step)))
       result)))
-
 

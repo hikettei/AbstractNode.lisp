@@ -9,6 +9,7 @@
 ;;  LazyAxisとScalarのInterpreter/Compilerを両方用意するのは冗長
 ;;  LazyAxisの実装をcompile-instructionsかどっかに統合する
 ;; -> compile-lazy-axisを実装しないでOKになる
+;; 先にScalarTensorのコンパイルを実装する->LazyAxisをそっちで実装
 
 (defun compile-instructions (backend-indicator bp nrank)
   ""
@@ -26,7 +27,7 @@
 		    nrank)
 		   (compile-iteration-helper
 		    backend-indicator
-		    (iter-n rank)
+		    (compile-symbol backend-indicator (iter-n backend-indicator rank))
 		    (iterator-from (nth rank iterators))
 		    (iterator-to   (nth rank iterators))
 		    (iterator-by   (nth rank iterators))
@@ -117,7 +118,7 @@ IR:
 	 (sorted-ir  (shared-buffer-schedule!  sorted-ir))
 	 (id->cname (make-hash-table :test #'equal))
 	 (bp-table  (make-hash-table :test #'equal)))
-    (multiple-value-bind (blueprints dynamic-shapes) (make-scheduling sorted-ir)
+    (multiple-value-bind (blueprints dynamic-shapes) (make-scheduling backend sorted-ir)
       (loop for bp in blueprints do
 	(setf (gethash (blueprint-id bp) id->cname) (gensym "OP")
 	      (gethash (blueprint-id bp) bp-table)  bp))	    
