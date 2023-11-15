@@ -19,7 +19,7 @@ To extend AbstractNode compiler to any devices you like, all users have to do is
    - [method] compile-iteration
    
 ")
-  (:use :cl :AbstractNode.graph #:alexandria)
+  (:use :cl :AbstractNode.graph)
 
   ;; Conditions
   (:export

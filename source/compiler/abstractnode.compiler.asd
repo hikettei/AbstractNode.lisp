@@ -1,8 +1,7 @@
 
 (asdf:defsystem :abstractnode.compiler
   :author      "hikettei <ichndm@gmail.com>"
-  :depends-on ("abstractnode.graph"
-	       #:alexandria)
+  :depends-on ("abstractnode.graph")
   :serial t
   :components
   ((:file "package")

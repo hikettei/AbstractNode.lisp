@@ -43,7 +43,7 @@
 		     "_")))))))
 
 (defun iter-n (backend-indicator n)
-  (compile-symbol backend-indicator (format nil "grid~a" n)))
+  (compile-symbol backend-indicator (format nil "gid~a" n)))
 
 (defun bp-variables (insts)
   (let ((vars))

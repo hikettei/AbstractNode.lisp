@@ -14,8 +14,3 @@
 #include <omp.h>"
   )
 
-(defmethod compile-lazy-index ((backend-indicator (eql :gcc)) shape)
-  "")
-
-(defmethod compile-aref ((backend-indicator (eql :gcc)) tensor index)
-  "")
