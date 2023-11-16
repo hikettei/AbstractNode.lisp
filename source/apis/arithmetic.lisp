@@ -24,13 +24,14 @@
 
 (export `(lazy-copy lazy-move))
 (defun lazy-move (move-to move-from &key (force nil))
-  (call
-   (make-op :=
-	    :name 'lazy-move
-	    :next-outputs #'element-wise
-	    :in-place-mutation-p (not force))
-   move-to
-   move-from))
+  (with-broadcasted-arrays (move-to move-from)
+    (call
+     (make-op :=
+	      :name 'lazy-move
+	      :next-outputs #'element-wise
+	      :in-place-mutation-p (not force))
+     move-to
+     move-from)))
 
 (defun lazy-copy (tensor &key (force nil))
   (lazy-move
@@ -46,14 +47,16 @@
 	     `(progn
 		(export ',name)
 		(defun ,name (&rest args)
-		  (apply
-		   #'call
-		   (make-op
-		    ,op
-		    :next-outputs #'element-wise
-		    :name ',node-named)
-		   `(,(lazy-copy (car args)) ,@(cdr args)))))))
+		  (with-broadcasted-arrays args
+		    (apply
+		     #'call
+		     (make-op
+		      ,op
+		      :next-outputs #'element-wise
+		      :name ',node-named)
+		     `(,(lazy-copy (car args)) ,@(cdr args))))))))
   (def lazy-add lazy-add :+)
   (def lazy-sub lazy-sub :-)
   (def lazy-mul lazy-mul :*)
   (def lazy-div lazy-div :/))
+

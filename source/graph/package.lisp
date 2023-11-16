@@ -53,6 +53,15 @@ A Package dedicated to express the computation node comprised of two principle o
    #:make-shape
    #:Shape
    #:Shape-Exp)
-  )
+
+  (:export
+   #:range
+   #:range-list)
+
+  (:export
+   #:%apply-reshape
+   #:%apply-slice
+   #:%apply-broadcast
+   #:%apply-permute))
 
 (in-package :abstractnode.graph)

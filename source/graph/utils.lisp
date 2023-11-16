@@ -29,7 +29,6 @@ Iterates shape over a rank following the order of `tensor-order`.
 	 (declare (ignorable ,orig-size ,visible-size ,broadcast-p ,range))
 	 ,@body))))
 
-
 (defun make-tensor-stride (shape layout)
   (ecase layout
     (:row
@@ -58,3 +57,12 @@ Iterates shape over a rank following the order of `tensor-order`.
 				 ,(nth (- i 1) shape))))
     strides))
 
+(defun compose (&rest fns)
+  (if fns
+      (let ((fn1 (car (last fns)))
+            (fns (butlast fns)))
+        #'(lambda (&rest args)
+                   (reduce #'funcall fns
+                           :from-end t
+                           :initial-value (apply fn1 args))))
+      #'identity))

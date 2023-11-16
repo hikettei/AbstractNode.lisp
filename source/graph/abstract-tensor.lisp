@@ -7,7 +7,7 @@
 
 (defstruct (Shape
 	    (:constructor %make-shape (expression)))
-  "## [struct] LazyAxis
+  "## [struct] Shape
 "
   (exp   (make-lazyaxis expression)))
 
@@ -26,8 +26,6 @@
 "
   (storage nil)
   (scalar-p nil         :type boolean)
-
-  ;; [TODO] Visible-Shape/Original-Shape
 
   (orig-shape nil       :type Shape-T)
   (shape      nil       :type Shape-T)
@@ -69,7 +67,7 @@
     (format stream "AbstractTensor{~a, ~a}
     storage=~a
     memory-id=~a, id=~a
-    node=~a
+    node=~a, broadcast=~a
     variables=~a"
 	    (tensor-shape obj)
 	    (tensor-dtype obj)
@@ -77,6 +75,7 @@
 	    (tensor-memory-id obj)
 	    (tensor-id obj)
 	    (tensor-node obj)
+	    (tensor-broadcasted-axis obj)
 	    (helper (tensor-variables obj)))))
 
 (defun make-scalar (storage dtype
@@ -116,4 +115,88 @@
    :ranges  nil
    :variables variables
    :memory-id memory-id))
+
+
+;; There's four principle operators for AbstractTensor:
+;;   - reshape   : changes the shape of tensor without copying
+;;   - slice     : given ranges, changes the visible area of elements
+;;   - broadcast : makes stride=0 at a specified dimension.
+;;   - permute   : changes the order of the axes.
+
+(defun %apply-reshape (tensor shape-after)
+  (declare (type AbstractTensor tensor)
+	   (type list shape-after))
+
+  (assert (null (tensor-ranges tensor))
+	  ()
+	  "apply-reshape: Can't create a reshape for viewed tensors.")
+
+  (assert (equal
+	   (tensor-order tensor)
+	   (range-list 0 (length (tensor-shape tensor))))
+	  ()
+	  "apply-reshape: Can't reshape a tensor whose order is shuffled.")
+  
+  (let ((result (copy-tensor tensor)))
+    (setf
+     (tensor-shape result)  (map 'list #'make-shape shape-after)
+     (tensor-stride result) (make-tensor-stride
+			     (tensor-shape result)
+			     (tensor-layout result))
+     (tensor-order result) (range-list 0 (length shape-after)))
+    result))
+
+(defun %apply-slice (tensor ranges)
+  (declare (type AbstractTensor tensor)
+	   (type list ranges))
+  (assert (every #'range-p ranges)
+	  nil
+	  "%make-view: Ranges can be given as a list of ranges. butgot: ~a" ranges)
+  (let ((result (copy-tensor tensor)))
+    (setf (tensor-ranges result) ranges
+	  (tensor-shape  result) (map 'list (compose #'make-shape #'range-size) ranges))
+    result))
+
+(defun %apply-broadcast (tensor nbroadcasts)
+  (declare (type AbstractTensor tensor)
+	   (type list nbroadcasts))
+  
+  (assert (and
+	   (flet ((broadcast-p (x) (or (null x) (numberp x) (shape-p x))))
+	     (every #'broadcast-p nbroadcasts))
+	   (= (length nbroadcasts) (length (tensor-shape tensor))))
+	  ()
+	  "%apply-broadcast: nbroadcast can be given as: the same rank as its shape, a list of nil or fixnum/shape but got ~a" nbroadcasts)
+
+  (let ((result (copy-tensor tensor)))
+    (setf (tensor-broadcasted-axis result)
+	  (map 'list (compose #'not #'null) nbroadcasts)
+	  (tensor-shape result)
+	  (loop for nbc   in nbroadcasts
+		for shape in (tensor-shape tensor)
+		collect (make-shape (or nbc shape))))
+    result))
+
+(defun %apply-permute (tensor order)
+  (declare (type AbstractTensor tensor)
+	   (type list order))
+
+  (assert (= (length order)
+	     (length (tensor-order tensor)))
+	  ()
+	  "%apply-permute: Assertion failed with (length order) = (length (tensor-order order))")
+  
+  (let ((result (copy-tensor tensor)))
+    (macrolet ((%shuffle (slot)
+		 `(setf ,slot
+			(loop for index in order
+			      collect
+			      (nth index ,slot)))))
+      (%shuffle (tensor-shape  result))
+      (%shuffle (tensor-stride result))
+      (%shuffle (tensor-orig-shape result))
+      (%shuffle (tensor-ranges result))
+      (%shuffle (tensor-broadcasted-axis result))
+      (setf (tensor-order result) (range-list 0 (length order)))
+      result)))
 
