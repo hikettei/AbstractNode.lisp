@@ -48,7 +48,7 @@
 			 #'parse-arg-helper
 			 (abstractnode-out-args inst))))
 	  (dolist (out-arg out-args)
-	    (format out "~a"
+	    (format out "~a~a~%"
 		    (compile-instruction
 		     backend-indicator
 		     :=
@@ -57,7 +57,8 @@
 		      #'compile-instruction
 		      backend-indicator
 		      op
-		      in-args)))))))))
+		      in-args))
+		    (compile-endline backend-indicator))))))))
 
 (defun compile-blueprint (backend-indicator name bp &aux (nrank (length (blueprint-iterators bp))))
   (declare (type blueprint bp))

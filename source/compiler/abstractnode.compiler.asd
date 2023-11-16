@@ -15,6 +15,7 @@
    (:file "compile-aref")
    (:file "compile-iteration")
    (:file "compile-function")
+   (:file "compile-endline")
    (:file "compile-symbol")
    (:file "compile-dtype")
    (:file "backend-template")))

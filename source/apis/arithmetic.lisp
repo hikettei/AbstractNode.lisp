@@ -1,14 +1,20 @@
 
 (in-package :abstractnode.apis)
 
-;; [TODO] Numpy-Semantic Broadcasting
+;; A list of fundamental ops:
+;; :+ :- :* :/ :=
+;; :dcast
+;;
+
+;; A list of mathematical ops:
+;;  :sin :cos :tan ...
 
 (defun element-wise (&rest args)
   "Element-Wise Operation is defined as:
 - 1. Reads N-length arguments
 - 2. Overwrites the result into the first one."
 
-  ;; [TODO] Asserting all arguments have the same shape
+  ;; [TODO] Asserting all arguments have the same shape/dtype
   (values
    (make-tensor (tensor-shape (car args))
 		(tensor-dtype (car args))

@@ -15,8 +15,8 @@ To extend AbstractNode compiler to any devices you like, all users have to do is
    - [method] compile-aref
    - [method] compile-function
    - [method] compile-instruction
-
    - [method] compile-iteration
+   - [method] compile-endline (Optional)
    
 ")
   (:use :cl :AbstractNode.graph)
@@ -40,5 +40,6 @@ To extend AbstractNode compiler to any devices you like, all users have to do is
    #:compile-iteration
    #:compile-iteration-helper
    #:compile-function
+   #:compile-endline
    ))
 

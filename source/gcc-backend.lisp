@@ -23,6 +23,8 @@
 "
   )
 
+(defmethod compile-endline ((backend-indicator (eql :gcc))) ";")
+
 (defmethod compile-aref ((backend-indicator (eql :gcc)) tensor index)
   (format nil "~a[~a]"
 	  (tensor-memory-id tensor)

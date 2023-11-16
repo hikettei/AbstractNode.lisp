@@ -95,6 +95,7 @@
 ;;    - OpFusion, Loop Collapse, Polyhedral Compiler etc
 ;;  - Broadcasting, Reduce, Matmul
 ;;  - Slice, Unfold/folding
+;;  - vectorized sleef ops
 
 ;; max/argmaxをどうやってvectorizeする？
 ;; reduce = broadcastで表現
@@ -107,6 +108,7 @@
     (abop:lazy-mul
      (make-tensor `(5 4 3) :float :input-p t)
      (make-tensor `(5 4 3) :float))
-    (make-tensor `(5 4 3) :float)))))
+    ;;(make-tensor `(5 4 3) :float)
+    (make-scalar 1 :float)))))
 
 
