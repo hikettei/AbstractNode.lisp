@@ -16,7 +16,7 @@
 	     (or
 	      (when (and follow-to
 			 (not (tensor-scalar-p arr)))
-		(%apply-reshape
+		(lazy-reshape
 		 arr
 		 `(,@(make-list diff :initial-element 1)
 		   ,@(tensor-shape arr))))
@@ -47,7 +47,7 @@
 		       collect arr
 		     else
 		       collect
-		       (%apply-broadcast
+		       (lazy-broadcast
 			arr
 			(loop for bc    in broadcast-to
 			      for shape in (tensor-shape arr)

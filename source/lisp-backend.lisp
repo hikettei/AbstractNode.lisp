@@ -100,6 +100,26 @@
 ;; max/argmaxをどうやってvectorizeする？
 ;; reduce = broadcastで表現
 
+(defun lazy-squared-matmul (N)
+  (let ((a (make-tensor `(,N ,N) :float))
+	(b (make-tensor `(,N ,N) :float)))
+    (abop:lazy-reduce
+     :+
+     (abop:lazy-mul
+      (abop:lazy-reshape a `(,N 1 ,N))
+      (abop:lazy-reshape
+       (abop:lazy-permute
+	b
+	`(1 0))
+       `(1 ,N ,N)))
+     2)))
+
+(print
+ (time
+  (compile-with-backend
+   :lisp
+   (lazy-squared-matmul 10))))
+
 (print
  (time
   (compile-with-backend
@@ -110,5 +130,3 @@
      (make-tensor `(5 4 3) :float))
     ;;(make-tensor `(5 4 3) :float)
     (make-scalar 1 :float)))))
-
-

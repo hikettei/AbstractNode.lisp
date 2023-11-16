@@ -7,6 +7,7 @@
   ((:file "package")
    (:file "utils")
    (:file "broadcast")
-   (:file "arithmetic")))
+   (:file "arithmetic")
+   (:file "reduce")))
 
 

@@ -23,12 +23,15 @@
 		    (tensor-memory-id obj)))
 	       (let ((strides))
 		 (do-ranked-tensor (rank act-size _ bc range) obj
-		   (push (nth rank (tensor-stride obj)) strides))
+		   (if bc
+		       (push 0 strides)
+		       (push (nth rank (tensor-stride obj)) strides)))
 		 (setq strides
 		       `(:+
 			 ,@(loop for nrank upfrom 0
 				 for stride in (reverse strides)
-				 collect
+				 unless (eql stride 0)
+				   collect
 				 `(:* ,(iter-n backend-indicator nrank) ,stride))))
 		 (compile-aref
 		  backend-indicator

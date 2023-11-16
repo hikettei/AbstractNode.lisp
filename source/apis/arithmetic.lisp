@@ -20,7 +20,8 @@
 		(tensor-dtype (car args))
 		:layout    (tensor-layout (car args))
 		:order     (tensor-order  (car args))
-		:memory-id (tensor-memory-id     (car args)))))
+		:memory-id (tensor-memory-id     (car args))
+		:broadcasted-axis (tensor-broadcasted-axis (car args)))))
 
 (export `(lazy-copy lazy-move))
 (defun lazy-move (move-to move-from &key (force nil))

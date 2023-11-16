@@ -31,6 +31,7 @@ A Package dedicated to express the computation node comprised of two principle o
    #:copy-tensor
    #:make-scalar
    #:make-tensor
+   #:dims
    #:tensor-storage
    #:tensor-scalar-p
    #:tensor-shape

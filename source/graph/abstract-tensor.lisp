@@ -127,18 +127,20 @@
   (declare (type AbstractTensor tensor)
 	   (type list shape-after))
 
-  (assert (null (tensor-ranges tensor))
+  (assert (every #'null (tensor-ranges tensor))
 	  ()
-	  "apply-reshape: Can't create a reshape for viewed tensors.")
+	  "apply-reshape: cannot reshape a viewed tensor")
 
   (assert (equal
 	   (tensor-order tensor)
 	   (range-list 0 (length (tensor-shape tensor))))
 	  ()
-	  "apply-reshape: Can't reshape a tensor whose order is shuffled.")
-  
+	  "apply-reshape: cannot reshape a tensor whose order is shuffled.")
+
   (let ((result (copy-tensor tensor)))
     (setf
+     (tensor-broadcasted-axis result) nil
+     (tensor-orig-shape result) (map 'list #'make-shape shape-after)
      (tensor-shape result)  (map 'list #'make-shape shape-after)
      (tensor-stride result) (make-tensor-stride
 			     (tensor-shape result)
@@ -197,6 +199,9 @@
       (%shuffle (tensor-orig-shape result))
       (%shuffle (tensor-ranges result))
       (%shuffle (tensor-broadcasted-axis result))
-      (setf (tensor-order result) (range-list 0 (length order)))
+      ;(setf (tensor-order result) (range-list 0 (length order)))
       result)))
+
+
+(defun dims (tensor) (length (tensor-shape tensor)))
 
