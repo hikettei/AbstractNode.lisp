@@ -55,9 +55,15 @@ When reimplementing backends to another accelerator, all users have to do is to 
 
 AbstractTensor = Basically regarded as a 1D Array but multiple-dimensional
 
-TODO: Lisp Backend
-
-TODO: No alexandria dependencies
-
 # References
+
+# Workload
+
+- [ ] Constructing a solid foundation
+- [ ] No dependencies (as possible)
+- [ ] Polyhedral Compiler, Parallelizing, Auto tuning, device-specific optimizations.
+- [ ] Implementing a cross compiler from AbstractNode.lisp to CLANG, Metal, OpenCL, and CUDA!
+- [ ] CLI Tools (./roswell/abstractnode-cli.ros, gcc-like features)
+- [ ] Autodiff (Lens)
+- [ ] CNN/RNN/Transformer Inference
 
